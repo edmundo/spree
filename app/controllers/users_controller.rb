@@ -14,6 +14,10 @@ class UsersController < Spree::BaseController
     wants.html { redirect_back_or_default(products_path) }         
   end
   
+  create do
+    flash :user_created_with_success.l
+  end
+  
   protected
   
   def can_only_edit_self

@@ -96,6 +96,9 @@ listing_tax_categories: Listing Tax Categories
 listing_users: Listing Users
 log_in: Log In
 logged_in_as: Logged in as
+logged_in_successfully: Logged in successfully.
+logged_out: You have been logged out.
+login_failed: Login authentication failed.
 login_name: Login
 logout: Logout
 mail_server_settings: Mail Server Settings
@@ -204,6 +207,7 @@ type: Type
 update: Update
 use_different_shipping_address: Use Different Shipping Address
 user: User
+user_created_with_success: User created with success!
 users: Users
 value: Value
 variants: Variants

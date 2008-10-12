@@ -88,7 +88,10 @@ listing_reports: Listando Relatórios
 listing_tax_categories: Listando Categorias de Taxa
 listing_users: Listando Usuários
 logged_in_as: Logado como
+logged_in_successfully: Login efetuado com sucesso.
+logged_out: Você saiu do sistema.
 log_in: Entre
+login_failed: Login recusado.
 login_name: Login
 logout: Sair
 mail_server_settings: Configuração do Servidor de E-mail
@@ -193,6 +196,7 @@ update: Atualizar
 use_different_shipping_address: Use um Endereço de Entrega Diferente
 users: Usuários
 user: Usuário
+user_created_with_success: Usuário criado com sucesso!
 value: Valor
 variants: Variantes
 version: Versão
