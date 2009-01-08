@@ -2,19 +2,19 @@ require File.dirname(__FILE__) + '/../spec_helper.rb'
 
 describe Order do
   before(:each) do
-    @variant = mock_model(Variant, :id => "1234", :price => 7.99)
+    @variant = Variant.new(:id => "1234", :price => 7.99)
     @inventory_unit = mock_model(InventoryUnit, :null_object => true)
     @creditcard_payment = mock_model(CreditcardPayment, :null_object => true)
     @user = mock_model(User, :email => "foo@exampl.com")
 
     @order = Order.new
     @order.checkout_complete = true
-    @order.creditcard_payment = @creditcard_payment
+    @order.creditcard_payments = [@creditcard_payment]
     @order.number = '#TEST1010'
     @order.user =  @user
 
     add_stubs(@order, :save => true, :inventory_units => [@inventory_unit])
-    @line_item =  LineItem.new(:variant => @variant, :quantity => 1)
+    @line_item =  LineItem.new(:variant => @variant, :quantity => 1, :price => 7.99)
     @order.line_items << @line_item
     InventoryUnit.stub!(:retrieve_on_hand).with(@variant, 1).and_return [@inventory_unit]
     OrderMailer.stub!(:deliver_confirm).with(any_args)   
@@ -29,11 +29,11 @@ describe Order do
   describe "next" do
     describe "from creditcard_payment" do
       before(:each) do
-        @order.state = 'creditcard_payment'
+        @order.state = 'creditcard'
       end
       it "should transition to authorized" do
         @order.next
-        @order.state.should == "authorized"
+        @order.state.should == "charged"
       end
       it "should mark inventory as sold" do
         @inventory_unit.should_receive(:sell!)
@@ -45,19 +45,7 @@ describe Order do
       end
     end
   end
-  
-  describe "ship" do
-    before(:each) {@order.state = "captured"}
-    it "should transition to shipped" do
-      @order.ship
-      @order.state.should == 'shipped'
-    end
-    it "should mark inventory as shipped" do
-      @inventory_unit.should_receive(:ship!)
-      @order.ship
-    end
-  end
-  
+    
   describe "cancel" do
     it "should mark inventory as on_hand" do
       @order.state = "captured"
@@ -79,7 +67,6 @@ describe Order do
       @order.return
     end
   end
-  
   
   describe "add_variant" do
     it "should add new line item if product does not currently existing in order" do
@@ -142,4 +129,30 @@ describe Order do
  
     end
   end
+
+  describe "resume" do
+    %w{in_progress shipment shipping_method creditcard charged }.each do |state|
+      it "should not be available in #{state} state" do 
+        @order.state = state
+        @order.send("can_resume?").should == false
+      end
+    end
+    it "should be available in canceled state" do 
+      @order.state = 'canceled'
+      @order.state_events = [StateEvent.new(:name => 'cancel', :previous_state => 'charged')]
+      @order.send("can_resume?").should == true
+    end
+    it "should restore the order to the previous state" do
+      @order.state_events = [StateEvent.new(:name => 'cancel', :previous_state => 'charged')]
+      @order.state = 'canceled'
+      @order.resume!
+      @order.state.should == 'charged'
+    end
+    it "should not be available for legacy orders wtih no prior state information" do 
+      @order.state = 'canceled'
+      @order.state_events = [StateEvent.new(:name => 'cancel')]
+      @order.send("can_resume?").should == false
+    end
+  end
+
 end
