@@ -6,6 +6,23 @@ module Spree::DependenciesExtension
   def require_or_load_with_extensions_additions(file_name, const_path=nil)
     file_loaded = false
 
+    # TODO: Ugly hack. Fix this. We only know how to handle models, if the path include the word models.
+    # If the file_name match we can start working on it.
+    if file_name =~ /^(.*app\/controllers\/)?(.*_controller)(\.rb)?$/
+      base_name = $2
+      file_type = 'controller'
+    elsif file_name =~ /^(.*app\/helpers\/)?(.*_helper)(\.rb)?$/
+      base_name = $2
+      file_type = 'helper'
+    elsif file_name =~ /^(.*app\/models\/)(.*)(\.rb)?$/
+      split = $2.split('.', 2)
+      base_name = split[0]
+      file_type = 'model'
+    else
+      # The file has a type that we don't know how to handle.'
+      file_type = 'unknown'
+    end
+
     # If the file is of a know type.
     if file_type != 'unknown'
       # First load code from Spree.
