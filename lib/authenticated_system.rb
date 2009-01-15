@@ -49,7 +49,8 @@ module AuthenticatedSystem
     #   skip_before_filter :login_required
     #
     def login_required
-      authorized? || access_denied
+      return if authorized? 
+      redirect_to login_path
     end
 
     # Redirect as appropriate when an access request fails.
@@ -62,9 +63,16 @@ module AuthenticatedSystem
     # simply close itself.
     def access_denied
       respond_to do |format|
-        format.html do
-          store_location
-          redirect_to login_path
+        format.html do    
+          if logged_in?
+            flash[:error] = t("authorization_failure")
+            redirect_to '/account/authorization_failure'
+            next
+          else
+            store_location
+            redirect_to login_path   
+            next
+          end
         end
         format.xml do
           request_http_basic_authentication 'Web Password'

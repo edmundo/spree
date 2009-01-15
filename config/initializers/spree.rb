@@ -29,11 +29,15 @@ Spree::Preferences::MailSettings.init
 #  include Spree::Support::CoreExtensions::Array
 #end
 
+# Ryan Bates - http://railscasts.com/episodes/112
+class ActiveRecord::Base
+  named_scope :conditions, lambda { |*args| {:conditions => args} }
+end
+
+
 class String #:nodoc:
   include Spree::Support::CoreExtensions::String
 end
 
 CalendarDateSelect.format = :american
-
-Locale.code = Spree::Config[:default_locale]
   

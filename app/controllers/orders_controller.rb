@@ -1,16 +1,20 @@
-class OrdersController < Admin::BaseController
-  before_filter :login_required, :only => [:checkout]
-  before_filter :load_object, :only => [:checkout]
+class OrdersController < Spree::BaseController
+  before_filter :require_user_account, :only => [:checkout]
+  before_filter :load_object, :only => [:checkout]          
+  before_filter :prevent_editing_complete_order, :only => [:edit, :update]            
+
   ssl_required :show
+
+  resource_controller
+  actions :all, :except => :index
+
   layout 'application'
   
   helper :products
-  
-  resource_controller
 
   create.after do    
     # add the specified product to the order
-    @order.add_variant(Variant.find(params[:id]))    
+    @order.add_variant(Variant.find(params[:variant][:id]))
     @order.save
   end
 
@@ -19,9 +23,8 @@ class OrdersController < Admin::BaseController
     flash nil 
     wants.html {redirect_to edit_order_url(@order)}
   end
-  
-  # override the default r_c behavior (r_c doesn't realize we're in a multi step process here)
-  edit.before {@order.edit!}
+                                                                           
+  edit.before { @order.edit! }
   
   def checkout
     if @order.state == "in_progress"
@@ -32,7 +35,7 @@ class OrdersController < Admin::BaseController
     if object.checkout_complete
       # remove the order from the session
       session[:order_id] = nil
-      redirect_to object_url and return
+      redirect_to object_url(:checkout_complete => true) and return
     else
       # note: controllers participating in checkout process are responsible for calling Order#next! 
       next_url = self.send("new_order_#{object.state}_url", @order)
@@ -52,19 +55,10 @@ class OrdersController < Admin::BaseController
   end
 
   protected
-  # Custom access denied action for orders.  In the case of an order, we'd like the user to be presented with a user 
-  # signup screen (as opposed to login) since its likely the user does not yet have an account.  The signup screen 
-  # also contains a link to the login screen if they already have an account.
-  def access_denied
-    respond_to do |format|
-      format.html do
-        store_location
-        redirect_to signup_path
-      end
-      format.xml do
-        request_http_basic_authentication 'Web Password'
-      end
-    end
+  def require_user_account
+    return if logged_in?
+    store_location
+    redirect_to signup_path 
   end
     
   private
@@ -83,5 +77,9 @@ class OrdersController < Admin::BaseController
       end
     end
     find_order
+  end   
+  
+  def prevent_editing_complete_order
+    redirect_to object_url unless @order.can_edit?
   end
 end

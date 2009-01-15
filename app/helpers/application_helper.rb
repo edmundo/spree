@@ -23,11 +23,22 @@ module ApplicationHelper
   # Renders all the extension partials that may have been specified in the extensions
   def render_extra_partials(f)
     @extension_partials.inject("") do |extras, partial|
-      extras += render :partial => partial, :locals => {:form => f}
+      extras += render :partial => partial, :locals => {:f => f}
     end
   end
   
   def flag_image(code)
     "#{code.to_s.split("-").last.downcase}.png"
+  end                      
+  
+  # Takes a filter and converts it into a hash of name/value pairs that can be used in query string
+  def generate_search_options(filter)
+    options = {}
+    filter.attributes.each do |key, value|
+      filter_key = "filter[#{key.to_s}]"
+      options[filter_key] = value
+    end
+    options
   end
+  
 end

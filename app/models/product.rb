@@ -10,6 +10,7 @@ class Product < ActiveRecord::Base
   has_many :properties, :through => :product_properties
   belongs_to :tax_category
   has_and_belongs_to_many :taxons
+  
 
   validates_presence_of :name
   validates_presence_of :master_price
@@ -19,9 +20,13 @@ class Product < ActiveRecord::Base
 
   alias :options :product_option_types
 
-  named_scope :available, lambda { |*args| { :conditions => ["available_on <= ?", (args.first || Time.zone.now)] } }
-  named_scope :by_name, lambda {|name| {:conditions => ["name like ?", "%#{name}%"]}}
+  # default product scope only lists available and non-deleted products
+  named_scope :active, lambda { |*args| { :conditions => ["products.available_on <= ? and products.deleted_at is null", (args.first || Time.zone.now)] } }
+  
+  named_scope :available, lambda { |*args| { :conditions => ["products.available_on <= ?", (args.first || Time.zone.now)] } }
+  named_scope :by_name, lambda {|name| {:conditions => ["products.name like ?", "%#{name}%"]}}
   named_scope :by_sku, lambda {|sku| { :include => :variants, :conditions => ["variants.sku like ?", "%#{sku}%"]}}
+  named_scope :deleted, :conditions =>  "not products.deleted_at is null"
 
   # checks is there are any meaningful variants (ie. variants with at least one option value)
   def variants?

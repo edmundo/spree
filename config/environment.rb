@@ -26,11 +26,11 @@ Spree::Initializer.run do |config|
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "aws-s3", :lib => "aws/s3"
 
-  config.gem "has_many_polymorphs", :version => '2.12'
   config.gem "highline", :version => '1.4.0'
   config.gem "activemerchant", :lib => "active_merchant", :version => '1.4.0'
   config.gem "tlsmail"
   config.gem 'active_presenter', :version => '0.0.4'
+  config.gem 'activerecord-tableless', :lib => 'tableless', :version => '0.1.0'
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
@@ -71,20 +71,11 @@ Spree::Initializer.run do |config|
 
   # Activate observers that should always be running
   # config.active_record.observers = :cacher, :garbage_collector  
-end
-
-
-# Load extension gems.
-config = Rails::Configuration.new
-Object.subclasses_of(Spree::Extension).each do |extension|
-  if extension.respond_to? :require_gems
-    extension.require_gems(config)
-  end
-end
-
-config.gems.each do |gem|
-  gem.add_load_paths
-  gem.load
+  
+  # The internationalization framework can be changed to have another default locale (standard is :en) or more load paths.
+  # All files from config/locales/*.rb,yml are added automatically.
+  #config.i18n.load_path << Dir[File.join(RAILS_ROOT, 'my', 'locales', '*.{rb,yml}')]
+  config.i18n.default_locale = :'en-US'
 end
 
 # Add new inflection rules using the following format 

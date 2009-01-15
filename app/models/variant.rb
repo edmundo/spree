@@ -7,7 +7,14 @@ class Variant < ActiveRecord::Base
   
   validates_presence_of :product
   validate :check_price
-
+  
+  
+  # default variant scope only lists non-deleted variants
+  named_scope :active, :conditions => "deleted_at is null"
+  named_scope :deleted, :conditions => "not deleted_at is null"
+  
+  @fields =[]
+  
   def on_hand
     inventory_units.with_state("on_hand").size
   end
@@ -18,6 +25,23 @@ class Variant < ActiveRecord::Base
   
   def in_stock
     on_hand > 0
+  end
+  
+  def self.additional_fields
+    @fields
+  end
+  
+  def self.additional_fields=(new_fields)
+    @fields = new_fields
+  end
+  
+  #Tries to get missing attribute value from  product
+  def method_missing(method, *args)
+    if product
+      product.has_attribute?(method) ? product[method] : super
+    else
+      super
+    end
   end
 
   private
@@ -47,4 +71,5 @@ class Variant < ActiveRecord::Base
         return false
       end
     end
+    
 end
