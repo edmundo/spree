@@ -1,6 +1,8 @@
 require 'digest/sha1'
 require 'RFC822'
 class User < ActiveRecord::Base
+  has_many :addresses, :as => :addressable, :dependent => :destroy
+
   # Virtual attribute for the unencrypted password
   attr_accessor :password
 

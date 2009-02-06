@@ -1,5 +1,5 @@
 class UsersController < Spree::BaseController
-  
+
 #  before_filter :login_required, :except => [:new, :create]
   before_filter :initialize_extension_partials
   
@@ -8,6 +8,11 @@ class UsersController < Spree::BaseController
   
   show.before do
     @orders = Order.checkout_completed(true).find_all_by_user_id(current_user.id)
+    @addresses ||= Address.find(
+      :all,
+      :conditions => "addressable_id = #{current_user.id} AND addressable_type = 'User'",
+      :order => "created_at DESC"
+    )
   end
 
   create.after do   

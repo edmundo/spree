@@ -9,6 +9,38 @@
 </table>
 <%= link_to t('edit'), edit_object_url %>
 
+<h1><%= t("my_addresses") %></h1>
+
+
+<table width="545">
+  <thead>
+    <tr>
+      <th style="white-space: nowrap; padding-right: 20px;"><%= t('name') %></th>
+      <th style="width: 100%;"><%= t('address') %></th>
+      <th style="text-align: center;"><%= t('action') %></th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @addresses.each do |address| %>
+    <tr class="<%= cycle('odd', 'even') %>">
+      <td style="white-space: nowrap; padding-right: 20px;"><%= link_to address.full_name, edit_user_address_url(@user, address) %></td>
+      <td>
+        <%= "#{address.address1}#{!address.address2.empty? ? ', ' + address.address2 : ''},
+          #{address.city} / #{address.state ? address.state.abbr : address.state_name}<br/>
+          #{t('zip')}: #{address.zipcode}<br/>
+          #{t('phone')}: #{address.phone}" %>
+      </td>
+      <td style="text-align: center;">
+        <%= link_to(t('actions.destroy'), user_address_url(@user, address), :method => :delete, :confirm => t('are_you_sure_delete')) %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<br />
+
+<%= link_to t('new_address'), new_user_address_url(@user) %>
 
 <h1><%= t("my_orders") %></h1>
  

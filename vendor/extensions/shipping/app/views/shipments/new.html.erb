@@ -1,5 +1,66 @@
 <div id="shipment">
   <%=error_messages_for :shipment_presenter%>
+
+<% if !@addresses.empty? -%>
+<table class="site_rounded_table">
+  <thead>
+    <tr>
+      <th class="left"></th>
+      <th style="width: 100%;">Endereços pré-definidos</th>
+      <th></th>
+      <th class="right"></th>
+    </tr>
+    <tr>
+      <td colspan="4"></td>
+    </tr>
+  </thead>
+  <tfoot>
+    <tr>
+      <td colspan="4" class="empty"></td>
+    </tr>
+  </tfoot>
+  <tbody>
+
+  <% @addresses.each_with_index do |address, i| %>
+    <tr class="<%= cycle('odd', 'even') %>">
+      <td></td>
+      <td>
+        <%= "<span style=\"font-weight: bold;\">#{address.firstname} #{address.lastname}</span> <br/>
+          #{address.address1}#{!address.address2.empty? ? ', ' + address.address2 : ''}<br/>
+          #{address.city} / #{address.state ? address.state.abbr : address.state_name}<br/>
+          #{t('zip')}: #{address.zipcode}<br/>
+          #{t('phone')}: #{address.phone}" %>
+      </td>
+      <td style="text-align: center;">
+
+        <% form_for :shipment_presenter, :url => collection_url do |f| %>
+          <input type="hidden" name="shipment_presenter[address_firstname]" value="<%= address.firstname %>" />
+          <input type="hidden" name="shipment_presenter[address_lastname]" value="<%= address.lastname %>" />
+          <input type="hidden" name="shipment_presenter[address_zipcode]" value="<%= address.zipcode %>" />
+          <input type="hidden" name="shipment_presenter[address_address1]" value="<%= address.address1 %>" />
+          <input type="hidden" name="shipment_presenter[address_address2]" value="<%= address.address2 %>" />
+          <input type="hidden" name="shipment_presenter[address_city]" value="<%= address.city %>" />
+          <input type="hidden" name="shipment_presenter[address_country_id]" value="<%= address.country.id %>" />
+          <% if address.state -%>
+            <input type="hidden" name="shipment_presenter[address_state_id]" value="<%= address.state.id %>" />
+          <% else -%>
+            <input type="hidden" name="shipment_presenter[address_state_name]" value="<%= address.state_name %>" />
+          <% end -%>
+          <input type="hidden" name="shipment_presenter[address_phone]" value="<%= address.phone %>" />
+
+          <%= submit_tag t('use_this_address') %>
+        <% end %>
+
+      </td>
+      <td></td>
+    </tr>
+  <% end %>
+
+  </tbody>
+</table>
+<br/>
+<% end -%>
+
   <h1><%= t("shipping_address")%></h1>
   <% form_for :shipment_presenter, :url => collection_url do |f| %>
 		<%= render :partial => 'shared/form_address', :locals => {:f => f, :presenter_type => "shipment"} %>

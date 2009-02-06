@@ -3,7 +3,8 @@ class ShipmentsController < Spree::BaseController
   before_filter :load_data, :except => :country_changed              
   before_filter :load_shipping_methods, :only => :edit
   before_filter :prevent_orphaned_shipments, :only => [:new, :create] 
-  
+  before_filter :load_related_data, :only => [:new, :create]
+
   resource_controller
   
   belongs_to :order  
@@ -91,6 +92,14 @@ class ShipmentsController < Spree::BaseController
       flash[:error] = se.message
       redirect_to fatal_shipping_order_url(@order)
     end
+  end
+
+  def load_related_data
+    @addresses ||= Address.find(
+      :all,
+      :conditions => "addressable_id = #{current_user.id} AND addressable_type = 'User'",
+      :order => "created_at DESC"
+    )
   end
   
 end

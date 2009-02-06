@@ -278,9 +278,11 @@ en-US:
   mail_server_settings: "Mail Server Settings"
   master_price: "Master Price"
   my_account: "My Account"
+  my_addresses: My Addresses
   my_orders: "My Orders"    
   name: Name
   new: New
+  new_address: New address
   new_category: "New category"
   new_credit_card_payment: "New Credit Card Payment"
   new_customer: "New Customer"
@@ -431,6 +433,7 @@ en-US:
   update: Update
   updated_successfully: "Updated Successfully"  
   use_different_shipping_address: "Use Different Shipping Address"
+  use_this_address: Use this address
   user: User
   user_details: "User Details"
   users: Users

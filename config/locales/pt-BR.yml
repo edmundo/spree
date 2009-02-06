@@ -278,9 +278,11 @@ pt-BR:
   mail_server_settings: "Configuração do Servidor de E-mail"
   master_price: "Preço Principal"
   my_account: "Minha Conta"
+  my_addresses: Meus Endereços
   my_orders: "My Orders"
   name: Name
   new: New
+  new_address: Novo endereço
   new_category: "Nova categoria"
   new_credit_card_payment: "New Credit Card Payment"
   new_customer: "New Customer"
@@ -431,6 +433,7 @@ pt-BR:
   update: Atualizar
   updated_successfully:
   use_different_shipping_address: "Use um Endereço de Entrega Diferente"
+  use_this_address: Usar este endereço
   user: Usuário
   user_details: "User Details"
   users: Usuários
