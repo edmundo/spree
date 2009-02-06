@@ -27,6 +27,7 @@
       <td>
         <%= "#{address.address1}#{!address.address2.empty? ? ', ' + address.address2 : ''},
           #{address.city} / #{address.state ? address.state.abbr : address.state_name}<br/>
+          #{address.country.name}<br/>
           #{t('zip')}: #{address.zipcode}<br/>
           #{t('phone')}: #{address.phone}" %>
       </td>

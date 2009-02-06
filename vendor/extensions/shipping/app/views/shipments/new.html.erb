@@ -1,33 +1,18 @@
 <div id="shipment">
   <%=error_messages_for :shipment_presenter%>
 
+<h1><%= t("predefined_addresses")%></h1>
 <% if !@addresses.empty? -%>
 <table class="site_rounded_table">
-  <thead>
-    <tr>
-      <th class="left"></th>
-      <th style="width: 100%;">Endereços pré-definidos</th>
-      <th></th>
-      <th class="right"></th>
-    </tr>
-    <tr>
-      <td colspan="4"></td>
-    </tr>
-  </thead>
-  <tfoot>
-    <tr>
-      <td colspan="4" class="empty"></td>
-    </tr>
-  </tfoot>
   <tbody>
 
   <% @addresses.each_with_index do |address, i| %>
     <tr class="<%= cycle('odd', 'even') %>">
-      <td></td>
       <td>
         <%= "<span style=\"font-weight: bold;\">#{address.firstname} #{address.lastname}</span> <br/>
           #{address.address1}#{!address.address2.empty? ? ', ' + address.address2 : ''}<br/>
           #{address.city} / #{address.state ? address.state.abbr : address.state_name}<br/>
+          #{address.country.name}<br/>
           #{t('zip')}: #{address.zipcode}<br/>
           #{t('phone')}: #{address.phone}" %>
       </td>
@@ -52,7 +37,6 @@
         <% end %>
 
       </td>
-      <td></td>
     </tr>
   <% end %>
 

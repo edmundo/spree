@@ -82,7 +82,7 @@ class AddressesController < Spree::BaseController
     @selected_country_id = params[:address_presenter][:address_country_id].to_i if params.has_key?('address_presenter')
     @selected_country_id ||= Spree::Config[:default_country_id]
     @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')
-    @countries = Country.find(:all)
+    @countries = Order.new.shipping_countries
   end
 
 end
